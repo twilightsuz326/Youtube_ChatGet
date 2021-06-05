@@ -1,5 +1,7 @@
 *.pyc
 *.xlsx
+*.csv
 twitter.py
 test.py
 main.py
+tocsv.py

@@ -2,6 +2,7 @@ import nettool
 import json
 import re
 import toyen
+import datetime
 
 class Chat:
     def __init__(self):
@@ -21,19 +22,32 @@ class Youtubedata:
         self.uploadtime = ""
         self.chatlist = []
         self.author = ""
+        self.title = ""
         self.channelid = ""
         self.twitterid = ""
+        self.imagepath = ""
         self.totalpaid = 0
 
     def firstjson(self):
         url = "https://www.youtube.com/watch?v={}".format(self.videoid)
         content = nettool.htmlget(url)
+
+        # 配信者詳細 JSON取得
+        datestart = content.find('var ytInitialPlayerResponse =')+30
+        dateend = content.find('AdServingDataEntry":""}}}]', datestart)+27
+        datetxt = content[datestart : dateend]
+        jsondata = json.loads(datetxt)
+
+        datestart = content.find('var ytInitialData =')+20
+        dateend = content.find('}}}}}}}', datestart)+7
+        datetxt = content[datestart : dateend]
+        jsonitdata = json.loads(datetxt)
         
         # アップロード日 取得
-        datestart = content.find('datePublished')+24
-        datetxt = content[datestart : datestart+10]
-        datetxt = datetxt.replace("-","")
-        self.uploadtime = datetxt
+        self.uploadtime = jsondata["microformat"]["playerMicroformatRenderer"]["liveBroadcastDetails"]["startTimestamp"]
+        date_dt = datetime.datetime.strptime(self.uploadtime, '%Y-%m-%dT%H:%M:%S+00:00') + datetime.timedelta(hours=9)
+        self.uploadtime = date_dt.strftime('%Y-%m-%d %H:%M:%S')
+        
 
         # TwitterID取得 (Test)
         subtext = content.find('<body dir="ltr')
@@ -43,18 +57,14 @@ class Youtubedata:
             self.twitterid = content[datestart:dateend]
 
         # 配信者取得
-        datestart = content.find('channelId":"', subtext)+12
-        dateend = content.find('"', datestart)
-        self.channelid = content[datestart:dateend]
+        self.channelid = jsondata["microformat"]["playerMicroformatRenderer"]["externalChannelId"]
+        self.author = jsondata["microformat"]["playerMicroformatRenderer"]["ownerChannelName"]
 
-        datestart = content.find('author":"', subtext)+9
-        dateend = content.find('"', datestart)
-        self.author = content[datestart:dateend]
+        # 動画名取得
+        self.title = jsondata["videoDetails"]["title"]
 
         # 配信者画像リンク取得
-        datestart = content.find('https://yt3.ggpht.com/ytc/', subtext)
-        dateend = content.find('=', subtext)
-        # あとで
+        self.imagepath = jsonitdata["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][1]["videoSecondaryInfoRenderer"]["owner"]["videoOwnerRenderer"]["thumbnail"]["thumbnails"][0]["url"].replace("=s48-c-k-c0x00ffffff-no-rj","")
 
         # チャットURL 取得
         jsonstart = content.find('一部の')+76
@@ -180,11 +190,14 @@ class Youtubedata:
                 print("{}{} ￥{} ({})".format(emoji[count], account.author, account.paid, account.yen))
         print("他{}人".format(len(self.chatlist)))
         print("合計￥{}".format(self.totalpaid))
+
+    def movieinfo_csv(self):
+        pass
         
 
 if __name__ == '__main__':
     yd = Youtubedata()
-    sp = yd.getspchat("_AkweolyFYE")
+    sp = yd.getspchat("rz-xS6JSmcQ")
     sp.rankchat()
     
 
