@@ -34,7 +34,7 @@ class Youtubedata:
 
         # 配信者詳細 JSON取得
         datestart = content.find('var ytInitialPlayerResponse =')+30
-        dateend = content.find('AdServingDataEntry":""}}}]', datestart)+27
+        dateend = content.find('<div id="player"', datestart)-179
         datetxt = content[datestart : dateend]
         jsondata = json.loads(datetxt)
 
@@ -67,9 +67,10 @@ class Youtubedata:
         self.imagepath = jsonitdata["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][1]["videoSecondaryInfoRenderer"]["owner"]["videoOwnerRenderer"]["thumbnail"]["thumbnails"][0]["url"].replace("=s48-c-k-c0x00ffffff-no-rj","")
 
         # チャットURL 取得
-        jsonstart = content.find('一部の')+76
-        jsontxt = content[jsonstart:].find('{"continuation') + 17 + jsonstart
-        self.nexturl = content[jsontxt :jsontxt+136]
+        if "liveChatRenderer" in jsonitdata["contents"]["twoColumnWatchNextResults"]["conversationBar"]:
+            self.nexturl = jsonitdata["contents"]["twoColumnWatchNextResults"]["conversationBar"]["liveChatRenderer"]["header"]["liveChatHeaderRenderer"]["viewSelector"]["sortFilterSubMenuRenderer"]["subMenuItems"][1]["continuation"]["reloadContinuationData"]["continuation"]
+        else:
+            raise Exception('Disable Chat.')
         return
 
     def htmlParseJson(self):
@@ -168,7 +169,7 @@ class Youtubedata:
     def getspchat(self, videoid):
         self.videoid = videoid
         self.firstjson()
-        print("{} ({}) (@{})\nhttps://youtu.be/{}\n配信日: {}\n - - - - - - ".format(self.author, self.channelid, self.twitterid, self.videoid, self.uploadtime))
+        print("{} ({}) (@{})\nhttps://youtu.be/{}\n{}\n配信日: {}\n - - - - - - ".format(self.author, self.channelid, self.twitterid, self.videoid, self.title, self.uploadtime))
         self.chatLoop()
         self.ratecalc()
 
