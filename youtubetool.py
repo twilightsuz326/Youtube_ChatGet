@@ -53,7 +53,7 @@ class Youtubedata:
         subtext = content.find('<body dir="ltr')
         datestart = content.find('twitter.com/', subtext)+12
         dateend = content.find("\\n", datestart)
-        if (dateend - datestart < 20):
+        if (dateend - datestart < 20 and datestart < dateend):
             self.twitterid = content[datestart:dateend]
 
         # 配信者取得
@@ -198,7 +198,7 @@ class Youtubedata:
 
 if __name__ == '__main__':
     yd = Youtubedata()
-    sp = yd.getspchat("rz-xS6JSmcQ")
+    sp = yd.getspchat("h7JGjFxzSfo")
     sp.rankchat()
     
 
