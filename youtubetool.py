@@ -202,7 +202,6 @@ class Youtubedata:
 if __name__ == '__main__':
     yd = Youtubedata()
     sp = yd.getspchat("h7JGjFxzSfo")
-    sp.rankchat()
     
 
     # ひろゆき
