@@ -27,6 +27,7 @@ class Youtubedata:
         self.twitterid = ""
         self.imagepath = ""
         self.totalpaid = 0
+        self.comcount = 0
 
     def firstjson(self):
         url = "https://www.youtube.com/watch?v={}".format(self.videoid)
@@ -102,6 +103,7 @@ class Youtubedata:
                 print(count)
 
     def jsontoPay(self, jsondata):
+        self.comcount += len(jsondata["actions"])
         for count in range(1, len(jsondata["actions"])-1) :
             if( "addChatItemAction"  in jsondata["actions"][count]["replayChatItemAction"]["actions"][0]): 
                 json_actions = jsondata["actions"][count]["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"]
@@ -172,6 +174,7 @@ class Youtubedata:
         print("{} ({}) (@{})\nhttps://youtu.be/{}\n{}\n配信日: {}\n - - - - - - ".format(self.author, self.channelid, self.twitterid, self.videoid, self.title, self.uploadtime))
         self.chatLoop()
         self.ratecalc()
+        self.rankchat()
 
         return self
 
@@ -186,9 +189,9 @@ class Youtubedata:
             account = st[count]
             emoji = ["🥇", "🥈", "🥉"]
             if (toyen.toPaidGroup(account.paid).group(1) == "￥"): 
-                print("{}{} ￥{}".format(emoji[count], account.author, account.yen))
+                print("{} {} ￥{}".format(emoji[count], account.author, account.yen))
             else:
-                print("{}{} ￥{} ({})".format(emoji[count], account.author, account.paid, account.yen))
+                print("{} {} ￥{} ({})".format(emoji[count], account.author, account.yen, account.paid))
         print("他{}人".format(len(self.chatlist)))
         print("合計￥{}".format(self.totalpaid))
 
