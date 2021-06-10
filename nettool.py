@@ -9,7 +9,7 @@ def htmlget(url):
     content = http.request(url, 'GET', headers=headers)[1].decode("utf-8")
     return content
 
-def getmovielist(url, body):
+def phpapi(body):
     content = http.request("https://superchat.jp/api/download.php", 
         method="POST", 
         headers={'Content-type': 'application/x-www-form-urlencoded'},
