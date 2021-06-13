@@ -40,7 +40,7 @@ class Youtubedata:
         jsondata = json.loads(datetxt)
 
         datestart = content.find('var ytInitialData =')+20
-        dateend = content.find('}}}}}}}', datestart)+7
+        dateend = content.find('</script>', datestart)-1
         datetxt = content[datestart : dateend]
         jsonitdata = json.loads(datetxt)
         
@@ -65,7 +65,12 @@ class Youtubedata:
         self.title = jsondata["videoDetails"]["title"]
 
         # 配信者画像リンク取得
-        self.imagepath = jsonitdata["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][1]["videoSecondaryInfoRenderer"]["owner"]["videoOwnerRenderer"]["thumbnail"]["thumbnails"][0]["url"].replace("=s48-c-k-c0x00ffffff-no-rj","")
+        if "videoSecondaryInfoRenderer" in jsonitdata["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][1]:
+            self.imagepath = jsonitdata["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][1]["videoSecondaryInfoRenderer"]["owner"]["videoOwnerRenderer"]["thumbnail"]["thumbnails"][0]["url"].replace("=s48-c-k-c0x00ffffff-no-rj","")
+        else:
+            if "videoSecondaryInfoRenderer" in jsonitdata["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][2]:
+               self.imagepath = jsonitdata["contents"]["twoColumnWatchNextResults"]["results"]["results"]["contents"][2]["videoSecondaryInfoRenderer"]["owner"]["videoOwnerRenderer"]["thumbnail"]["thumbnails"][0]["url"].replace("=s48-c-k-c0x00ffffff-no-rj","")
+
 
         # チャットURL 取得
         if "liveChatRenderer" in jsonitdata["contents"]["twoColumnWatchNextResults"]["conversationBar"]:
@@ -201,7 +206,7 @@ class Youtubedata:
 
 if __name__ == '__main__':
     yd = Youtubedata()
-    sp = yd.getspchat("h7JGjFxzSfo")
+    sp = yd.getspchat("_AkweolyFYE")
     
 
     # ひろゆき
