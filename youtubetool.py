@@ -73,10 +73,13 @@ class Youtubedata:
 
 
         # チャットURL 取得
-        if "liveChatRenderer" in jsonitdata["contents"]["twoColumnWatchNextResults"]["conversationBar"]:
-            self.nexturl = jsonitdata["contents"]["twoColumnWatchNextResults"]["conversationBar"]["liveChatRenderer"]["header"]["liveChatHeaderRenderer"]["viewSelector"]["sortFilterSubMenuRenderer"]["subMenuItems"][1]["continuation"]["reloadContinuationData"]["continuation"]
-        else:
-            raise Exception('Disable Chat.')
+        try:
+            if "liveChatRenderer" in jsonitdata["contents"]["twoColumnWatchNextResults"]["conversationBar"]:
+                self.nexturl = jsonitdata["contents"]["twoColumnWatchNextResults"]["conversationBar"]["liveChatRenderer"]["header"]["liveChatHeaderRenderer"]["viewSelector"]["sortFilterSubMenuRenderer"]["subMenuItems"][1]["continuation"]["reloadContinuationData"]["continuation"]
+            else:
+                raise Exception('Disable Chat.')
+        except:
+            raise Exception('NOT FOUND Chat.')
         return
 
     def htmlParseJson(self):
@@ -206,7 +209,7 @@ class Youtubedata:
 
 if __name__ == '__main__':
     yd = Youtubedata()
-    sp = yd.getspchat("_AkweolyFYE")
+    sp = yd.getspchat("AgVFzkj3_Rc")
     
 
     # ひろゆき
