@@ -20,6 +20,7 @@ class Youtubedata:
         self.videoid = ""
         self.nexturl = ""
         self.uploadtime = ""
+        self.endtime = ""
         self.chatlist = []
         self.author = ""
         self.title = ""
@@ -47,7 +48,11 @@ class Youtubedata:
         # アップロード日 取得
         self.uploadtime = jsondata["microformat"]["playerMicroformatRenderer"]["liveBroadcastDetails"]["startTimestamp"]
         date_dt = datetime.datetime.strptime(self.uploadtime, '%Y-%m-%dT%H:%M:%S+00:00') + datetime.timedelta(hours=9)
+        self.endtime = jsondata["microformat"]["playerMicroformatRenderer"]["liveBroadcastDetails"]["endTimestamp"]
+        date_end = datetime.datetime.strptime(self.endtime, '%Y-%m-%dT%H:%M:%S+00:00') + datetime.timedelta(hours=9)
+
         self.uploadtime = date_dt.strftime('%Y-%m-%d %H:%M:%S')
+        self.endtime = date_end.strftime('%Y-%m-%d %H:%M:%S')
         
 
         # TwitterID取得 (Test)
@@ -179,7 +184,7 @@ class Youtubedata:
     def getspchat(self, videoid):
         self.videoid = videoid
         self.firstjson()
-        print("{} ({}) (@{})\nhttps://youtu.be/{}\n{}\n配信日: {}\n - - - - - - ".format(self.author, self.channelid, self.twitterid, self.videoid, self.title, self.uploadtime))
+        print("{} ({}) (@{})\nhttps://youtu.be/{}\n{}\n配信日: {} - {}\n - - - - - - ".format(self.author, self.channelid, self.twitterid, self.videoid, self.title, self.uploadtime, self.endtime))
         self.chatLoop()
         self.ratecalc()
         self.rankchat()
